@@ -1,10 +1,10 @@
 import Trash from "../icons/Trash";
 import React, { useRef, useEffect, useState } from "react";
-import { setNewOffset, autoGrow, setZIndex } from "../utils";
+import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils";
 
 const NoteCard = ({ note }) => {
   //*Static Variable
-  const body = JSON.parse(note.body);
+  const body = bodyParser(note.body);
   const colors = JSON.parse(note.colors);
   let mouseStartPos = { x: 0, y: 0 };
   //*State Variable

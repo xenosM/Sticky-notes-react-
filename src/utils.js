@@ -23,3 +23,11 @@ export function setZIndex(selectedCard){
     })
 
 }
+export function  bodyParser(value){
+    try{
+        return JSON.parse(value)
+    }catch(err){
+        return value
+    }
+
+}
