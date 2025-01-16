@@ -1,6 +1,8 @@
 import Trash from "../icons/Trash";
+import Spinner from "../icons/spinner";
 import React, { useRef, useEffect, useState } from "react";
 import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils";
+import { db } from "../appwrite/database";
 
 const NoteCard = ({ note }) => {
   //*Static Variable
@@ -9,9 +11,11 @@ const NoteCard = ({ note }) => {
   let mouseStartPos = { x: 0, y: 0 };
   //*State Variable
   const [position, setPosition] = useState(JSON.parse(note.position));
+  const [saving,setSaving] = useState(false);
   //*Reference Variable
   const textAreaRef = useRef(null);
   const cardRef = useRef(null);
+  const keyUpTimer = useRef(null)
   //* Side Effects
   useEffect(() => {
     autoGrow(textAreaRef);
@@ -20,7 +24,7 @@ const NoteCard = ({ note }) => {
   const handleMouseDown = (e) => {
     mouseStartPos.x = e.clientX;
     mouseStartPos.y = e.clientY;
-    setZIndex(cardRef.current)
+    setZIndex(cardRef.current);
     document.addEventListener("mousemove", handleMouseMove);
     document.addEventListener("mouseup", handleMouseUp);
   };
@@ -43,6 +47,31 @@ const NoteCard = ({ note }) => {
   const handleMouseUp = () => {
     document.removeEventListener("mousemove", handleMouseMove);
     document.removeEventListener("mouseup", handleMouseDown);
+
+    const newPosition = setNewOffset(cardRef.current);
+    saveData("position", newPosition);
+  };
+  const handleKeyUp = async()=>{
+      //initiate saving
+      setSaving(true)
+      
+      //
+      if(keyUpTimer.current){
+        clearTimeout(keyUpTimer.current)
+      }
+      keyUpTimer.current = setTimeout(()=>{
+        saveData("body",textAreaRef.current.value)
+      },2000)
+
+  }
+  const saveData = async (key, value) => {
+    const payload = { [key]: JSON.stringify(value) };
+    try {
+      await db.notes.update(note.$id, payload);
+    } catch (err) {
+      console.log(err);
+    }
+    setSaving(false)
   };
   //*Return Value
   return (
@@ -63,6 +92,12 @@ const NoteCard = ({ note }) => {
         onMouseDown={handleMouseDown}
       >
         <Trash />
+        {saving && (
+          <div className="card-saving">
+            <Spinner color={colors.colorText} />
+            <span style={{ color: colors.colorText }}>Saving...</span>
+          </div>
+        )}
       </div>
       <div className="card-body">
         <textarea
@@ -72,7 +107,8 @@ const NoteCard = ({ note }) => {
           onInput={() => {
             autoGrow(textAreaRef);
           }}
-          onFocus={()=>setZIndex(cardRef.current)}
+          onFocus={() => setZIndex(cardRef.current)}
+          onKeyUp={handleKeyUp}
         ></textarea>
       </div>
     </div>
