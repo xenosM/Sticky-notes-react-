@@ -5,7 +5,7 @@ import React, { useRef, useEffect, useState } from "react";
 import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils";
 import { db } from "../appwrite/database";
 
-const NoteCard = ({ note,setNotes }) => {
+const NoteCard = ({ note}) => {
   //*Static Variable
   const body = bodyParser(note.body);
   const colors = JSON.parse(note.colors);
@@ -94,7 +94,7 @@ const NoteCard = ({ note,setNotes }) => {
         }}
         onMouseDown={handleMouseDown}
       >
-        <DeleteButton setNotes={setNotes} noteId={note.$id}/>
+        <DeleteButton  noteId={note.$id}/>
         {saving && (
           <div className="card-saving">
             <Spinner color={colors.colorText} />
