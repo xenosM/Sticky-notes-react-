@@ -20,6 +20,7 @@ const NoteCard = ({ note}) => {
   //* Side Effects
   useEffect(() => {
     autoGrow(textAreaRef);
+    setZIndex(cardRef.current)
   }, []);
   //*Function Declaration
   const handleMouseDown = (e) => {
