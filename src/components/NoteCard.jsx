@@ -1,15 +1,19 @@
 import Trash from "../icons/Trash";
 import Spinner from "../icons/spinner";
 import DeleteButton from "./DeleteButton";
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState,useContext } from "react";
+import { NoteContext } from "../context/NoteContext";
 import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils";
 import { db } from "../appwrite/database";
+
 
 const NoteCard = ({ note}) => {
   //*Static Variable
   const body = bodyParser(note.body);
   const colors = JSON.parse(note.colors);
   let mouseStartPos = { x: 0, y: 0 };
+  //*Context Variables
+  const {setSelectedNote} = useContext(NoteContext)
   //*State Variable
   const [position, setPosition] = useState(JSON.parse(note.position));
   const [saving,setSaving] = useState(false);
@@ -47,6 +51,7 @@ const NoteCard = ({ note}) => {
     //the current left and top value of card - the direction and magnitude the card goes
     const newPosition = setNewOffset(cardRef.current, mouseMoveDir);
     setPosition(newPosition);
+    setSelectedNote(note)
   };
   const handleMouseUp = () => {
     document.removeEventListener("mousemove", handleMouseMove);
