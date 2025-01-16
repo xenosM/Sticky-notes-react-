@@ -1,10 +1,11 @@
 import Trash from "../icons/Trash";
 import Spinner from "../icons/spinner";
+import DeleteButton from "./DeleteButton";
 import React, { useRef, useEffect, useState } from "react";
 import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils";
 import { db } from "../appwrite/database";
 
-const NoteCard = ({ note }) => {
+const NoteCard = ({ note,setNotes }) => {
   //*Static Variable
   const body = bodyParser(note.body);
   const colors = JSON.parse(note.colors);
@@ -22,11 +23,13 @@ const NoteCard = ({ note }) => {
   }, []);
   //*Function Declaration
   const handleMouseDown = (e) => {
-    mouseStartPos.x = e.clientX;
-    mouseStartPos.y = e.clientY;
-    setZIndex(cardRef.current);
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    if(e.target.className ==="card-header"){
+      mouseStartPos.x = e.clientX;
+      mouseStartPos.y = e.clientY;
+      setZIndex(cardRef.current);
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    }
   };
   const handleMouseMove = (e) => {
     //calculate how far the mouse has moved since the last mouse move
@@ -91,7 +94,7 @@ const NoteCard = ({ note }) => {
         }}
         onMouseDown={handleMouseDown}
       >
-        <Trash />
+        <DeleteButton setNotes={setNotes} noteId={note.$id}/>
         {saving && (
           <div className="card-saving">
             <Spinner color={colors.colorText} />
