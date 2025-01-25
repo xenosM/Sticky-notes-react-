@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 eslint.config.js
-/dist
+.env
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
